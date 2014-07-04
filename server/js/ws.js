@@ -11,6 +11,9 @@ var cls = require("./lib/class"),
     WS = {},
     useBison = false;
 
+var static = require('node-static')
+var fileServer = new static.Server("client");
+
 module.exports = WS;
 
 
@@ -117,19 +120,20 @@ WS.MultiVersionWebsocketServer = Server.extend({
         
         this._super(port);
         
+
         this._httpServer = http.createServer(function(request, response) {
-            var path = url.parse(request.url).pathname;
-            switch(path) {
-                case '/status':
+            request.addListener('end', function () {
+                var path = url.parse(request.url).pathname;
+                if (path == "/status") {
                     if(self.status_callback) {
                         response.writeHead(200);
                         response.write(self.status_callback());
-                        break;
+                        response.end();
                     }
-                default:
-                    response.writeHead(404);
-            }
-            response.end();
+                } else {
+                    fileServer.serve(request, response);
+                }
+            }).resume();
         });
         this._httpServer.listen(port, function() {
             log.info("Server is listening on port "+port);
