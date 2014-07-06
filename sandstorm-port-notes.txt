@@ -1,11 +1,16 @@
 The main change here is to merge a static content server into the websocket server.
 
 I could not get the code built by bin/build.sh to work. Instead, I just serve the raw source code:
-
 $ cd client
 $ cp -r ../shared .
 
 
 I followed these instructions to populate client/audio/music:
-
 https://gist.github.com/brynnb/3734650
+
+
+Known issues:
+
+The displated number of players is not always exactly correct or consistent.
+I suspect this has to do with the fact that we configure "metrics_enabled = false".
+Enabling metrics runs into other problems, though.
