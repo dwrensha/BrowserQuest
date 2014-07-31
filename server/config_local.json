@@ -1,0 +1,11 @@
+{
+    "port": 7097,
+    "debug_level": "debug",
+    "nb_players_per_world": 200,
+    "nb_worlds": 1,
+    "map_filepath": "./server/maps/world_server.json",
+    "metrics_enabled": true,
+    "memcached_port":11211,
+    "memcached_host":"127.0.0.1",
+    "game_servers" : [{"name":"the_server"}]
+}

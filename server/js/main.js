@@ -44,7 +44,7 @@ function main(config) {
                 }
             };
         
-        if(metrics) {
+        if(false) {
             metrics.getOpenWorldCount(function(open_world_count) {
                 // choose the least populated world among open worlds
                 world = _.min(_.first(worlds, open_world_count), function(w) { return w.playerCount; });

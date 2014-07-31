@@ -9,8 +9,3 @@ I followed these instructions to populate client/audio/music:
 https://gist.github.com/brynnb/3734650
 
 
-Known issues:
-
-The displated number of players is not always exactly correct or consistent.
-I suspect this has to do with the fact that we configure "metrics_enabled = false".
-Enabling metrics runs into other problems, though.

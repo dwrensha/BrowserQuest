@@ -9,5 +9,6 @@
     , "websocket": ">0"
     , "websocket-server": ">0"
     , "sanitizer": "~0.0.1"
+    , "memcache": "~0.3.0"
   }
 }
