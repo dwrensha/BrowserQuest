@@ -1,5 +1,5 @@
 
-memcached -d
+mkdir /var/www
+cp -r client/* /var/www
 
-
-node server/js/main.js
+sh continue.sh

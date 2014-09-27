@@ -11,6 +11,8 @@ var cls = require("./lib/class"),
     WS = {},
     useBison = false;
 
+Capnp = require('capnp');
+
 var serveStatic = require('serve-static')
 var serveFiles = serveStatic('client', {'index': ['index.html']})
 
@@ -88,7 +90,8 @@ var Connection = cls.Class.extend({
     }
 });
 
-
+HackSessionContext = Capnp.import('schema/hack-session.capnp').HackSessionContext;
+var rpcConn;
 
 /**
  * MultiVersionWebsocketServer
@@ -137,9 +140,26 @@ WS.MultiVersionWebsocketServer = Server.extend({
             });
         });
         this._httpServer.listen(port, function() {
-            log.info("Server is listening on port "+port);
+          log.info("Server is listening on port "+port);
+          // need to wait another 10ms or so before we know /tmp/sandstorm-api exists
+          setTimeout(function() {
+            console.log("the socket should exist now");
+
+            console.log("imported");
+
+            rpcConn = Capnp.connect("unix:/tmp/sandstorm-api");
+            console.log("connected");
+            var context = rpcConn.restore("HackSessionContext", HackSessionContext);
+            console.log("restored");
+            context.getPublicId().then(function(result) {
+              console.log("context: " + context);
+              console.log("got it: " + result.publicId);
+            }).catch(function(err) {
+              console.log("what?");
+              console.log("error: " + err);
+            });
+          }, 15);
         });
-        
         this._miksagoServer = wsserver.createServer();
         this._miksagoServer.server = this._httpServer;
         this._miksagoServer.addListener('connection', function(connection) {

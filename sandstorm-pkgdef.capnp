@@ -22,24 +22,14 @@ const pkgdef :Spk.PackageDefinition = (
     actions = [
       # Define your "new document" handlers here.
       ( title = (defaultText = "New BrowserQuest Instance"),
-        command = .myCommand
-        # The command to run when starting for the first time. (".myCommand"
-        # is just a constant defined at the bottom of the file.)
+        command = .startCommand
       )
     ],
 
-    continueCommand = .myCommand
-    # This is the command called to start your app back up after it has been
-    # shut down for inactivity. Here we're using the same command as for
-    # starting a new instance, but you could use different commands for each
-    # case.
+    continueCommand = .continueCommand
   ),
 
   sourceMap = (
-    # Here we defined where to look for files to copy into your package. The
-    # `spk dev` command actually figures out what files your app needs
-    # automatically by running it on a FUSE filesystem. So, the mappings
-    # here are only to tell it where to find files that the app wants.
     searchPath = [
       ( sourcePath = "." ),  # Search this directory first.
       ( sourcePath = "/",    # Then search the system root directory.
@@ -52,22 +42,19 @@ const pkgdef :Spk.PackageDefinition = (
   ),
 
   fileList = "sandstorm-files.list",
-  # `spk dev` will write a list of all the files your app uses to this file.
-  # You should review it later, before shipping your app.
-
   alwaysInclude = []
-  # Fill this list with more names of files or directories that should be
-  # included in your package, even if not listed in sandstorm-files.list.
-  # Use this to force-include stuff that you know you need but which may
-  # not have been detected as a dependency during `spk dev`. If you list
-  # a directory here, its entire contents will be included recursively.
 );
 
-const myCommand :Spk.Manifest.Command = (
-  # Here we define the command used to start up your server.
+const startCommand :Spk.Manifest.Command = (
   argv = ["/sandstorm-http-bridge", "7097", "--", "sh", "start.sh"],
   environ = [
-    # Note that this defines the *entire* environment seen by your app.
+    (key = "PATH", value = "/usr/local/bin:/usr/bin:/bin")
+  ]
+);
+
+const continueCommand :Spk.Manifest.Command = (
+  argv = ["/sandstorm-http-bridge", "7097", "--", "sh", "continue.sh"],
+  environ = [
     (key = "PATH", value = "/usr/local/bin:/usr/bin:/bin")
   ]
 );
