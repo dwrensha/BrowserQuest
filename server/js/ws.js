@@ -12,6 +12,9 @@ var cls = require("./lib/class"),
     useBison = false;
 
 Capnp = require('capnp');
+fs = require('fs');
+HackSessionContext = Capnp.import('schema/hack-session.capnp').HackSessionContext;
+var rpcConn; // put this out here to prevent it from being garbage collected.
 
 var serveStatic = require('serve-static')
 var serveFiles = serveStatic('client', {'index': ['index.html']})
@@ -90,9 +93,6 @@ var Connection = cls.Class.extend({
     }
 });
 
-HackSessionContext = Capnp.import('schema/hack-session.capnp').HackSessionContext;
-var rpcConn;
-
 /**
  * MultiVersionWebsocketServer
  * 
@@ -144,20 +144,33 @@ WS.MultiVersionWebsocketServer = Server.extend({
           // need to wait another 10ms or so before we know /tmp/sandstorm-api exists
           setTimeout(function() {
             console.log("the socket should exist now");
-
-            console.log("imported");
-
             rpcConn = Capnp.connect("unix:/tmp/sandstorm-api");
             console.log("connected");
             var context = rpcConn.restore("HackSessionContext", HackSessionContext);
-            console.log("restored");
             context.getPublicId().then(function(result) {
-              console.log("context: " + context);
               console.log("got it: " + result.publicId);
             }).catch(function(err) {
               console.log("what?");
               console.log("error: " + err);
             });
+            context.listApiTokens().then(function(result) {
+              var tokens = result.tokens;
+              if (tokens.length == 0) {
+                console.log("no tokens!");
+                context.generateApiToken({petname:"browserquest"}).then(function(result) {
+                  console.log(result);
+                  fs.writeFile('/var/www/js/apitoken.js',
+                               "define(function () {var ApiToken = {};\n" +
+                               "ApiToken.value = '" + result.token + "';\n" +
+                               "return ApiToken;});");
+                }).catch(function (err) {
+                  console.log(err);
+                });
+              } else {
+                console.log("already have a token");
+              }
+            });
+
           }, 15);
         });
         this._miksagoServer = wsserver.createServer();

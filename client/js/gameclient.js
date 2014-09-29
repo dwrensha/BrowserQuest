@@ -1,5 +1,5 @@
 
-define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory, BISON) {
+define(['player', 'entityfactory', 'lib/bison', 'apitoken'], function(Player, EntityFactory, BISON, ApiToken) {
 
     var GameClient = Class.extend({
         init: function(host, port) {
@@ -45,6 +45,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
         },
         
         connect: function(dispatcherMode) {
+          console.log("ApiToken: " + ApiToken.value);
             //var url = "ws://"+ this.host +":"+ this.port +"/",
             var protocol = "ws:"
             if (window.location.protocol == "https:") {
