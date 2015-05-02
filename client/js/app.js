@@ -2,13 +2,14 @@
 define(['jquery', 'storage'], function($, Storage) {
 
     var App = Class.extend({
-        init: function() {
+        init: function(startData) {
             this.currentPage = 1;
             this.blinkInterval = null;
             this.previousState = null;
             this.isParchmentReady = true;
             this.ready = false;
-            this.storage = new Storage();
+            this.storage = new Storage(startData);
+            this.startData = startData;
             this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
             this.$playButton = $('.play'),
             this.$playDiv = $('.play div');
@@ -394,7 +395,7 @@ define(['jquery', 'storage'], function($, Storage) {
             } else {
                 if(currentState !== 'animate') {
                     if(currentState === 'about') {
-                        if(localStorage && localStorage.data) {
+                        if(this.startData) {
                             this.animateParchment(currentState, 'loadcharacter');
                         } else {
                             this.animateParchment(currentState, 'createcharacter');

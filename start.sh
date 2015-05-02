@@ -1,3 +1,6 @@
+set -x
+
+mkdir -p /var/localStorage
 
 memcached -d
 

@@ -1,8 +1,8 @@
 
 var cls = require("./lib/class"),
     url = require('url'),
-    wsserver = require("websocket-server"),
-    miksagoConnection = require('websocket-server/lib/ws/connection'),
+    wsserver = require("node-websocket-server"),
+    miksagoConnection = require('node-websocket-server/lib/ws/connection'),
     worlizeRequest = require('websocket').request,
     http = require('http'),
     Utils = require('./utils'),
@@ -122,19 +122,68 @@ WS.MultiVersionWebsocketServer = Server.extend({
         
 
         this._httpServer = http.createServer(function(request, response) {
-            serveFiles(request, response, function (request, response, next) {
-                var path = url.parse(request.url).pathname;
-                if (path == "/status") {
-                    if(self.status_callback) {
-                        response.writeHead(200);
-                        response.write(self.status_callback());
-                        response.end();
-                    }
+          var path = url.parse(request.url).pathname;
+
+          if (path === "/.localStorage") {
+            var userid = request.headers["x-sandstorm-user-id"];
+            console.log("local storage for user: " + userid);
+            if (request.method === "GET") {
+              console.log("GET");
+              fs.readFile("/var/localStorage/" + userid, function(err, data) {
+                if (err) {
+                  console.log("failed to read user local data: " + err);
+                  response.writeHead(404);
+                  response.end();
                 } else {
-                    response.writeHead(404);
-                    response.end();
+                  response.writeHead(200);
+                  response.write(data);
+                  response.end();
                 }
+              });
+
+            } else if (request.method === "PUT") {
+              console.log("PUT");
+              if (!userid) {
+                response.writeHead(200);
+                response.end();
+                return;
+              }
+              var file = "/var/localStorage/" + userid;
+              var body = '';
+              request.on('data', function(data) {
+                body += data;
+              });
+
+              request.on('end', function (){
+                fs.writeFile(file, body, function(err) {
+                  if (err) {
+                    response.writeHead(500);
+                    response.end();
+                  } else {
+                    response.writeHead(200);
+                    response.end();
+                  }
+                });
+              });
+
+            } else {
+              response.writeHead(400);
+              response.end();
+            }
+          } else {
+            serveFiles(request, response, function () {
+              if (path == "/status") {
+                if(self.status_callback) {
+                  response.writeHead(200);
+                  response.write(self.status_callback());
+                  response.end();
+                }
+              } else {
+                response.writeHead(404);
+                response.end();
+              }
             });
+          }
         });
         this._httpServer.listen(port, function() {
             log.info("Server is listening on port "+port);

@@ -2,12 +2,33 @@
 define(function() {
 
     var Storage = Class.extend({
-        init: function() {
-            if(this.hasLocalStorage() && localStorage.data) {
-                this.data = JSON.parse(localStorage.data);
+        init: function(startData) {
+            this.needsSave = false;
+            if(startData) {
+              this.data = startData;
             } else {
                 this.resetData();
             }
+
+          var self = this;
+          setInterval(function() {
+            if (self.needsSave) {
+              self.needsSave = false;
+              console.log("saving...");
+              $.ajax({
+                mimeType: "text/json",
+                type: 'put',
+                url: '/.localStorage',
+                data: JSON.stringify(self.data),
+                success: function (data) {
+                  console.log("success");
+                },
+                error: function() {
+                  console.log("failure");
+                }
+              });
+            }
+          }, 5000);
         },
     
         resetData: function() {
@@ -29,22 +50,17 @@ define(function() {
                 }
             };
         },
-    
+
         hasLocalStorage: function() {
             return Modernizr.localstorage;
         },
-    
+
         save: function() {
-            if(this.hasLocalStorage()) {
-                localStorage.data = JSON.stringify(this.data);
-            }
+          this.needsSave = true;
         },
-    
+
         clear: function() {
-            if(this.hasLocalStorage()) {
-                localStorage.data = "";
-                this.resetData();
-            }
+          this.resetData();
         },
     
         // Player

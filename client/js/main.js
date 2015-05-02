@@ -2,9 +2,9 @@
 define(['jquery', 'app'], function($, App) {
     var app, game;
 
-    var initApp = function() {
+    var initApp = function(startData) {
         $(document).ready(function() {
-        	app = new App();
+        	app = new App(startData);
             app.center();
         
             if(Detect.isWindows()) {
@@ -404,6 +404,18 @@ define(['jquery', 'app'], function($, App) {
             }
         });
     };
-    
-    initApp();
+
+  $.ajax({
+    dataType: 'json',
+    type: 'get',
+    url: '/.localStorage',
+    success: function (data) {
+      var parchment = document.getElementById("parchment");
+      parchment.className = "loadcharacter";
+      initApp(data);
+    },
+    error: function() {
+      initApp();
+    }
+  });
 });
