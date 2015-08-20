@@ -15,14 +15,40 @@ const pkgdef :Spk.PackageDefinition = (
 
   manifest = (
 
-    appVersion = 2,  # Increment this for every release.
-    appMarketingVersion = (defaultText = "0.0.2"),
+    appVersion = 3,  # Increment this for every release.
+    appMarketingVersion = (defaultText = "2015.08.20"),
 
     appTitle = (defaultText = "BrowserQuest"),
+
+    metadata = (
+      icons = (
+        appGrid = (png = (dpi1x = embed "app-graphics/browserquest-128.png",
+                          dpi2x = embed "app-graphics/browserquest-256.png")),
+        grain = (png = (dpi1x = embed "app-graphics/browserquest-24.png",
+                        dpi2x = embed "app-graphics/browserquest-48.png")),
+        market = (png = (dpi1x = embed "app-graphics/browserquest-150.png",
+                         dpi2x = embed "app-graphics/browserquest-300.png")),
+      ),
+      website = "http://browserquest.mozilla.org",
+      codeUrl = "https://github.com/dwrensha/BrowserQuest",
+      license = (openSource = mpl2),
+      categories = [games,],
+      author = (
+        upstreamAuthor = "Little Workshop",
+        contactEmail = "david@sandstorm.io",
+        pgpSignature = embed "pgp-signature",
+      ),
+      pgpKeyring = embed "pgp-keyring",
+      description = (defaultText = embed "description.md"),
+      screenshots = [(width = 448, height = 313, png = embed "screenshot.png")],
+      changeLog = (defaultText = embed "changeLog.md"),
+    ),
+
 
     actions = [
       # Define your "new document" handlers here.
       ( title = (defaultText = "New BrowserQuest Instance"),
+        nounPhrase = (defaultText = "BrowserQuest Instance"),
         command = .myCommand
       )
     ],
@@ -33,6 +59,7 @@ const pkgdef :Spk.PackageDefinition = (
   sourceMap = (
     searchPath = [
       ( sourcePath = "." ),  # Search this directory first.
+      ( sourcePath = "/opt/app"),
       ( sourcePath = "/",    # Then search the system root directory.
         hidePaths = [ "home", "proc", "sys", "etc/resolv.conf" ]
       )
