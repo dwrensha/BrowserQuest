@@ -15,8 +15,8 @@ const pkgdef :Spk.PackageDefinition = (
 
   manifest = (
 
-    appVersion = 3,  # Increment this for every release.
-    appMarketingVersion = (defaultText = "2015.08.20"),
+    appVersion = 4,  # Increment this for every release.
+    appMarketingVersion = (defaultText = "2015.10.31"),
 
     appTitle = (defaultText = "BrowserQuest"),
 
@@ -40,6 +40,7 @@ const pkgdef :Spk.PackageDefinition = (
       ),
       pgpKeyring = embed "pgp-keyring",
       description = (defaultText = embed "description.md"),
+      shortDescription = (defaultText = "Role-playing game"),
       screenshots = [(width = 448, height = 313, png = embed "screenshot.png")],
       changeLog = (defaultText = embed "changeLog.md"),
     ),
@@ -47,8 +48,8 @@ const pkgdef :Spk.PackageDefinition = (
 
     actions = [
       # Define your "new document" handlers here.
-      ( title = (defaultText = "New BrowserQuest Instance"),
-        nounPhrase = (defaultText = "BrowserQuest Instance"),
+      ( title = (defaultText = "New game"),
+        nounPhrase = (defaultText = "game"),
         command = .myCommand
       )
     ],
